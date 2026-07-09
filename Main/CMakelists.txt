@@ -2,7 +2,9 @@ idf_component_register(
     SRCS
         "main.c"
         "ui.c"
+        "ui_home.c"
         "ui_events.c"
+   
 
     INCLUDE_DIRS
         "."

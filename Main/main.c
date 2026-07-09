@@ -1,8 +1,9 @@
 #include "bsp/esp32_p4_wifi6_touch_lcd_xc.h"
-
-#include "lvgl.h"
+#include "ui.h"
 
 #include "esp_log.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 static const char *TAG = "MAIN";
 
@@ -19,47 +20,25 @@ void app_main(void)
         },
     };
 
-    lv_display_t *display = bsp_display_start_with_config(&cfg);
-
-    if(display == NULL)
+    if (bsp_display_start_with_config(&cfg) == NULL)
     {
         ESP_LOGE(TAG, "Display init failed");
 
-        while(1);
+        while (1)
+        {
+            vTaskDelay(pdMS_TO_TICKS(1000));
+        }
     }
 
     bsp_display_backlight_on();
 
     bsp_display_lock(portMAX_DELAY);
 
-    lv_obj_t *scr = lv_screen_active();
-
-    lv_obj_set_style_bg_color(
-        scr,
-        lv_color_white(),
-        0);
-
-    lv_obj_t *label = lv_label_create(scr);
-
-    lv_label_set_text(
-        label,
-        "Hello VTT_V2");
-
-    lv_obj_set_style_text_font(
-        label,
-        &lv_font_montserrat_30,
-        0);
-
-    lv_obj_set_style_text_color(
-        label,
-        lv_color_black(),
-        0);
-
-    lv_obj_center(label);
+    ui_create();
 
     bsp_display_unlock();
 
-    ESP_LOGI(TAG, "Display OK");
+    ESP_LOGI(TAG, "Application Started");
 
     while (1)
     {

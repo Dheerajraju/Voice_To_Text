@@ -1,0 +1,9 @@
+Display resolution: 720 * 720 4inch
+Font size: 34px and 28px
+LVGL Version: 9.5.0(official)
+Waveshare BSP: v2.0
+Framework: ESP-IDF 5.5.4
+Chip revision: v1.0
+colur gradiant: RGB565
+Flash size: 32MB
+ESP PSRAM: enable

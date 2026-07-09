@@ -1,4 +1,13 @@
-#pragma once
+/*
+ * ============================================================
+ * ESP32-P4 AI Voice Assistant
+ * Stage 4.1
+ * UI Header
+ * ============================================================
+ */
+
+#ifndef UI_H
+#define UI_H
 
 #include "lvgl.h"
 
@@ -6,10 +15,31 @@
 extern "C" {
 #endif
 
-void ui_create(void);
-void ui_set_status(const char *text);
-void ui_set_indicator_color(lv_color_t color);
+/*-------------------------------------------------------------
+ * Global UI Objects
+ *------------------------------------------------------------*/
+
+extern lv_obj_t *ui_screen;
+
+extern lv_obj_t *ui_title;
+
+extern lv_obj_t *ui_mic_btn;
+extern lv_obj_t *ui_mic_label;
+
+extern lv_obj_t *ui_status;
+
+extern lv_obj_t *ui_speech;
+
+extern lv_obj_t *ui_response;
+
+/*-------------------------------------------------------------
+ * UI Initialization
+ *------------------------------------------------------------*/
+
+void ui_init(void);
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* UI_H */

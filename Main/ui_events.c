@@ -1,70 +1,51 @@
+/*
+ * ============================================================
+ * ESP32-P4 AI Voice Assistant
+ * Stage 4.1
+ * UI Events
+ * ============================================================
+ */
+
 #include "ui_events.h"
 #include "ui.h"
 
 #include "esp_log.h"
+#include "lvgl.h"
 
 static const char *TAG = "UI";
 
-static lv_timer_t *record_timer = NULL;
-static lv_timer_t *blink_timer = NULL;
-
-static bool visible = true;
-
-static void blink_cb(lv_timer_t *t)
-{
-    visible = !visible;
-
-    if (visible)
-    {
-        ui_set_indicator_color(lv_palette_main(LV_PALETTE_RED));
-    }
-    else
-    {
-        ui_set_indicator_color(lv_color_white());
-    }
-}
-
-static void record_finished(lv_timer_t *t)
-{
-    if (blink_timer)
-    {
-        lv_timer_del(blink_timer);
-        blink_timer = NULL;
-    }
-
-    ui_set_status("STATUS : COMPLETED");
-
-    ui_set_indicator_color(
-        lv_palette_main(LV_PALETTE_GREEN));
-
-    record_timer = NULL;
-}
+/*-------------------------------------------------------------
+ * Microphone Button Event
+ *------------------------------------------------------------*/
 
 void mic_btn_event_cb(lv_event_t *e)
 {
-    if (record_timer != NULL)
-        return;
+    ESP_LOGI(TAG, "MIC Button Pressed");
 
-    ESP_LOGI(TAG, "Recording Started");
+    /* Change button color */
 
-    ui_set_status("STATUS : RECORDING");
+    lv_obj_set_style_bg_color(
+        ui_mic_btn,
+        lv_palette_main(LV_PALETTE_RED),
+        0);
 
-    ui_set_indicator_color(
-        lv_palette_main(LV_PALETTE_RED));
+    /* Update status */
 
-    visible = true;
+    lv_label_set_text(
+        ui_status,
+        "Status : Recording...");
 
-    blink_timer = lv_timer_create(
-        blink_cb,
-        500,
-        NULL);
+    /* Update speech area */
 
-    record_timer = lv_timer_create(
-        record_finished,
-        5000,
-        NULL);
+    lv_label_set_text(
+        ui_speech,
+        "Recognized Speech:\n\nListening...");
 
-    lv_timer_set_repeat_count(
-        record_timer,
-        1);
+    /* Update AI response */
+
+    lv_label_set_text(
+        ui_response,
+        "AI Response:\n\nWaiting for speech...");
+
+    ESP_LOGI(TAG, "UI Updated");
 }

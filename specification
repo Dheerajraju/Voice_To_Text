@@ -10,5 +10,6 @@ Flash size: 32MB
 ESP PSRAM: enable
 Microphone: ES7210
 Speaker: ES8311
+Frame buffer: 2
 LCD Initilization: JD9365
 Touch initliztion: GT911

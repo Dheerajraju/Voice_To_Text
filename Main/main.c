@@ -1,7 +1,7 @@
 /*
  * ============================================================
  * ESP32-P4 AI Voice Assistant
- * Stage 4.1
+ * Stage 5
  * Main Application
  * ============================================================
  */
@@ -14,6 +14,7 @@
 #include "bsp/esp-bsp.h"
 
 #include "ui.h"
+#include "mic.h"
 
 static const char *TAG = "VOICE_AI";
 
@@ -21,7 +22,7 @@ void app_main(void)
 {
     ESP_LOGI(TAG, "========================================");
     ESP_LOGI(TAG, "ESP32-P4 AI Voice Assistant");
-    ESP_LOGI(TAG, "Stage 4.1");
+    ESP_LOGI(TAG, "Stage 5");
     ESP_LOGI(TAG, "========================================");
 
     /*----------------------------------------------------------
@@ -43,11 +44,6 @@ void app_main(void)
         },
     };
 
-    /*
-     * IMPORTANT:
-     * This function returns an lv_display_t*
-     * NOT esp_err_t
-     */
     lv_display_t *display = bsp_display_start_with_config(&cfg);
 
     if (display == NULL)
@@ -61,6 +57,19 @@ void app_main(void)
     }
 
     bsp_display_backlight_on();
+
+    /*----------------------------------------------------------
+     * Initialize Microphone
+     *---------------------------------------------------------*/
+
+    if (mic_init() != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Microphone initialization failed");
+    }
+    else
+    {
+        ESP_LOGI(TAG, "Microphone initialized successfully");
+    }
 
     /*----------------------------------------------------------
      * Create UI

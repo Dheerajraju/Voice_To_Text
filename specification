@@ -1,3 +1,4 @@
+Target: esp32p4
 Display resolution: 720 * 720 4inch
 Font size: 34px and 28px
 LVGL Version: 9.5.0(official)
@@ -7,4 +8,4 @@ Chip revision: v1.0
 colur gradiant: RGB565
 Flash size: 32MB
 ESP PSRAM: enable
-Microphone : ES7210
+Microphone: ES7210

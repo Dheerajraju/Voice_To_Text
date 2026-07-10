@@ -1,175 +1,141 @@
-/*
- * ============================================================
- * ESP32-P4 AI Voice Assistant
- * Stage 4.1
- * Home Screen
- * ============================================================
- */
-
 #include "ui_home.h"
 #include "ui.h"
 #include "ui_events.h"
-#include "lvgl.h"
 
-/*-------------------------------------------------------------
- * Create Home Screen
- *------------------------------------------------------------*/
+#include "lvgl.h"
 
 void ui_home_create(void)
 {
-    /* Active Screen */
+    lv_obj_t *scr = lv_screen_active();
 
-    ui_screen = lv_screen_active();
-
-    /*---------------------------------------------------------
+    /*--------------------------------------------------
      * Background
-     *--------------------------------------------------------*/
+     *-------------------------------------------------*/
+    lv_obj_set_style_bg_color(scr, lv_color_hex(0x101820), 0);
+    lv_obj_set_style_bg_opa(scr, LV_OPA_COVER, 0);
 
-    lv_obj_set_style_bg_color(
-        ui_screen,
-        lv_color_hex(0x101820),
-        LV_PART_MAIN);
-
-    lv_obj_set_style_bg_opa(
-        ui_screen,
-        LV_OPA_COVER,
-        LV_PART_MAIN);
-
-    /*---------------------------------------------------------
+    /*--------------------------------------------------
      * Title
-     *--------------------------------------------------------*/
+     *-------------------------------------------------*/
+    lv_obj_t *title = lv_label_create(scr);
 
-    ui_title = lv_label_create(ui_screen);
+    lv_label_set_text(title, "AI Voice Assistant");
 
-    lv_label_set_text(
-        ui_title,
-        "ESP32-P4 AI Voice Assistant");
+    lv_obj_set_style_text_color(title,
+                                lv_color_white(),
+                                LV_PART_MAIN);
 
-    lv_obj_set_style_text_font(
-        ui_title,
-        &lv_font_montserrat_28,
-        0);
+    lv_obj_set_style_text_font(title,
+                               &lv_font_montserrat_28,
+                               LV_PART_MAIN);
 
-    lv_obj_align(
-        ui_title,
-        LV_ALIGN_TOP_MID,
-        0,
-        25);
+    lv_obj_align(title,
+                 LV_ALIGN_TOP_MID,
+                 0,
+                 40);
 
-    /*---------------------------------------------------------
+    /*--------------------------------------------------
      * Microphone Button
-     *--------------------------------------------------------*/
+     *-------------------------------------------------*/
+    ui_mic_btn = lv_button_create(scr);
 
-    ui_mic_btn = lv_button_create(ui_screen);
+    lv_obj_set_size(ui_mic_btn,
+                    260,
+                    80);
 
-    lv_obj_set_size(
-        ui_mic_btn,
-        260,
-        80);
+    lv_obj_align(ui_mic_btn,
+                 LV_ALIGN_TOP_MID,
+                 0,
+                 120);
 
-    lv_obj_align(
-        ui_mic_btn,
-        LV_ALIGN_TOP_MID,
-        0,
-        90);
+    lv_obj_set_style_radius(ui_mic_btn,
+                            20,
+                            LV_PART_MAIN);
 
-    lv_obj_set_style_radius(
-        ui_mic_btn,
-        20,
-        0);
+    lv_obj_set_style_bg_color(ui_mic_btn,
+                              lv_palette_main(LV_PALETTE_BLUE),
+                              LV_PART_MAIN);
 
-    lv_obj_set_style_bg_color(
-        ui_mic_btn,
-        lv_palette_main(LV_PALETTE_BLUE),
-        0);
+    lv_obj_add_event_cb(ui_mic_btn,
+                        mic_btn_event_cb,
+                        LV_EVENT_CLICKED,
+                        NULL);
 
-    lv_obj_add_event_cb(
-        ui_mic_btn,
-        mic_btn_event_cb,
-        LV_EVENT_CLICKED,
-        NULL);
+    lv_obj_t *btn_label = lv_label_create(ui_mic_btn);
 
-    ui_mic_label = lv_label_create(ui_mic_btn);
+    lv_label_set_text(btn_label,
+                      "Press to Talk");
 
-    lv_label_set_text(
-        ui_mic_label,
-        "Press To Talk");
+    lv_obj_set_style_text_color(btn_label,
+                                lv_color_white(),
+                                LV_PART_MAIN);
 
-    lv_obj_set_style_text_font(
-        ui_mic_label,
-        &lv_font_montserrat_22,
-        0);
+    lv_obj_set_style_text_font(btn_label,
+                               &lv_font_montserrat_22,
+                               LV_PART_MAIN);
 
-    lv_obj_center(ui_mic_label);
+    lv_obj_center(btn_label);
 
-    /*---------------------------------------------------------
-     * Status Panel
-     *--------------------------------------------------------*/
+    /*--------------------------------------------------
+     * Status
+     *-------------------------------------------------*/
+    ui_status = lv_label_create(scr);
 
-    ui_status = lv_label_create(ui_screen);
+    lv_label_set_text(ui_status,
+                      "Status : Ready");
 
-    lv_label_set_text(
-        ui_status,
-        "Status : Ready");
+    lv_obj_set_style_text_color(ui_status,
+                                lv_color_white(),
+                                LV_PART_MAIN);
 
-    lv_obj_set_style_text_font(
-        ui_status,
-        &lv_font_montserrat_20,
-        0);
+    lv_obj_set_style_text_font(ui_status,
+                               &lv_font_montserrat_22,
+                               LV_PART_MAIN);
 
-    lv_obj_align(
-        ui_status,
-        LV_ALIGN_TOP_LEFT,
-        40,
-        220);
+    lv_obj_align(ui_status,
+                 LV_ALIGN_TOP_MID,
+                 0,
+                 250);
 
-    /*---------------------------------------------------------
-     * Speech Panel
-     *--------------------------------------------------------*/
+    /*--------------------------------------------------
+     * Speech Heading
+     *-------------------------------------------------*/
+    ui_speech = lv_label_create(scr);
 
-    ui_speech = lv_label_create(ui_screen);
+    lv_label_set_text(ui_speech,
+                      "Recognized Speech");
 
-    lv_label_set_text(
-        ui_speech,
-        "Recognized Speech:\n\nWaiting...");
+    lv_obj_set_style_text_color(ui_speech,
+                                lv_color_white(),
+                                LV_PART_MAIN);
 
-    lv_obj_set_width(
-        ui_speech,
-        640);
+    lv_obj_set_style_text_font(ui_speech,
+                               &lv_font_montserrat_22,
+                               LV_PART_MAIN);
 
-    lv_obj_set_style_text_font(
-        ui_speech,
-        &lv_font_montserrat_18,
-        0);
+    lv_obj_align(ui_speech,
+                 LV_ALIGN_TOP_MID,
+                 0,
+                 340);
 
-    lv_obj_align(
-        ui_speech,
-        LV_ALIGN_TOP_LEFT,
-        40,
-        290);
+    /*--------------------------------------------------
+     * AI Response
+     *-------------------------------------------------*/
+    ui_response = lv_label_create(scr);
 
-    /*---------------------------------------------------------
-     * AI Response Panel
-     *--------------------------------------------------------*/
+    lv_label_set_text(ui_response,
+                      "AI Response");
 
-    ui_response = lv_label_create(ui_screen);
+    lv_obj_set_style_text_color(ui_response,
+                                lv_color_white(),
+                                LV_PART_MAIN);
 
-    lv_label_set_text(
-        ui_response,
-        "AI Response:\n\nWaiting...");
+    lv_obj_set_style_text_font(ui_response,
+                               &lv_font_montserrat_22,
+                               LV_PART_MAIN);
 
-    lv_obj_set_width(
-        ui_response,
-        640);
-
-    lv_obj_set_style_text_font(
-        ui_response,
-        &lv_font_montserrat_18,
-        0);
-
-    lv_obj_align(
-        ui_response,
-        LV_ALIGN_TOP_LEFT,
-        40,
-        470);
+    lv_obj_align(ui_response,
+                 LV_ALIGN_TOP_MID,
+                 0,
+                 500);
 }

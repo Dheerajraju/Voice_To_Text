@@ -9,3 +9,6 @@ colur gradiant: RGB565
 Flash size: 32MB
 ESP PSRAM: enable
 Microphone: ES7210
+Speaker: ES8311
+LCD Initilization: JD9365
+Touch initliztion: GT911

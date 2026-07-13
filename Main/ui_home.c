@@ -1,8 +1,10 @@
 /*
  * ============================================================
  * ESP32-P4 AI Voice Assistant
+ * VTT_V8
+ * Stage 4.3
  * Home Screen
- * Optimized for 720x720 Display
+ * Compatible with LVGL v9
  * ============================================================
  */
 
@@ -14,8 +16,8 @@
 void ui_home_create(void)
 {
     /*---------------------------------------------------------
-     * Screen
-     *---------------------------------------------------------*/
+     * Create Screen
+     *--------------------------------------------------------*/
     ui_screen = lv_obj_create(NULL);
 
     lv_obj_remove_style_all(ui_screen);
@@ -25,15 +27,21 @@ void ui_home_create(void)
     lv_obj_set_style_bg_color(
         ui_screen,
         lv_color_white(),
-        LV_PART_MAIN);
+        0);
+
+    lv_obj_set_style_bg_opa(
+        ui_screen,
+        LV_OPA_COVER,
+        0);
 
     /*---------------------------------------------------------
      * Title
-     *---------------------------------------------------------*/
-
+     *--------------------------------------------------------*/
     ui_title = lv_label_create(ui_screen);
 
-    lv_label_set_text(ui_title, "AI Voice Assistant");
+    lv_label_set_text(
+        ui_title,
+        "AI Voice Assistant");
 
     lv_obj_set_style_text_font(
         ui_title,
@@ -44,12 +52,11 @@ void ui_home_create(void)
         ui_title,
         LV_ALIGN_TOP_MID,
         0,
-        45);
+        40);
 
     /*---------------------------------------------------------
-     * Button
-     *---------------------------------------------------------*/
-
+     * Microphone Button
+     *--------------------------------------------------------*/
     ui_mic_btn = lv_button_create(ui_screen);
 
     lv_obj_set_size(
@@ -61,7 +68,7 @@ void ui_home_create(void)
         ui_mic_btn,
         LV_ALIGN_TOP_MID,
         0,
-        120);
+        110);
 
     lv_obj_set_style_radius(
         ui_mic_btn,
@@ -98,16 +105,17 @@ void ui_home_create(void)
     lv_obj_center(ui_mic_label);
 
     /*---------------------------------------------------------
-     * Status
-     *---------------------------------------------------------*/
-
+     * Status Label
+     *--------------------------------------------------------*/
     ui_status = lv_label_create(ui_screen);
 
     lv_label_set_text(
         ui_status,
         "Status : Ready");
 
-    lv_obj_set_width(ui_status, 600);
+    lv_obj_set_width(
+        ui_status,
+        600);
 
     lv_obj_set_style_text_align(
         ui_status,
@@ -123,12 +131,11 @@ void ui_home_create(void)
         ui_status,
         LV_ALIGN_TOP_MID,
         0,
-        255);
+        250);
 
     /*---------------------------------------------------------
      * Speech Title
-     *---------------------------------------------------------*/
-
+     *--------------------------------------------------------*/
     ui_speech_title = lv_label_create(ui_screen);
 
     lv_label_set_text(
@@ -148,8 +155,7 @@ void ui_home_create(void)
 
     /*---------------------------------------------------------
      * Speech Text
-     *---------------------------------------------------------*/
-
+     *--------------------------------------------------------*/
     ui_speech_text = lv_label_create(ui_screen);
 
     lv_obj_set_width(
@@ -178,5 +184,12 @@ void ui_home_create(void)
         ui_speech_text,
         LV_ALIGN_TOP_MID,
         0,
-        385);
+        380);
+
+    /*---------------------------------------------------------
+     * Load Screen
+     *--------------------------------------------------------*/
+    lv_screen_load(ui_screen);
+
+    lv_refr_now(NULL);
 }

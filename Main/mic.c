@@ -7,6 +7,7 @@
  */
 
 #include "mic.h"
+#include "wav.h"
 
 #include <string.h>
 #include <math.h>
@@ -164,12 +165,33 @@ esp_err_t mic_start(void)
     }
 
     ESP_LOGI(TAG,
-             "Captured %lu samples",
-             (unsigned long)sample_count);
+         "Captured %lu samples",
+         (unsigned long)sample_count);
 
-    analyze_audio();
+/* Analyze the recorded audio */
+analyze_audio();
 
-    return ESP_OK;
+/*---------------------------------------------------------
+ * Save recording as WAV
+ *---------------------------------------------------------*/
+ESP_LOGI(TAG, "Saving WAV file...");
+
+esp_err_t wav_ret =
+    wav_save_file(
+        WAV_FILE_PATH,
+        audio_buffer,
+        sample_count);
+
+if (wav_ret != ESP_OK)
+{
+    ESP_LOGE(TAG, "Failed to save WAV file");
+}
+else
+{
+    ESP_LOGI(TAG, "WAV file saved successfully");
+}
+
+return ESP_OK;
 }
 
 /*-------------------------------------------------------------

@@ -1,8 +1,8 @@
 /*
  * ============================================================
  * ESP32-P4 AI Voice Assistant
- * Stage 4.1
  * Home Screen Header
+ * Compatible with LVGL v9
  * ============================================================
  */
 
@@ -13,10 +13,15 @@
 extern "C" {
 #endif
 
+#include "ui.h"
+
 /*-------------------------------------------------------------
- * Create Home Screen
+ * Public Function
  *------------------------------------------------------------*/
 
+/**
+ * @brief Create the Home Screen
+ */
 void ui_home_create(void);
 
 #ifdef __cplusplus

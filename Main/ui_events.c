@@ -1,7 +1,5 @@
 /*
  * ============================================================
- * ESP32-P4 AI Voice Assistant
- * Stage 5
  * UI Events
  * ============================================================
  */
@@ -10,13 +8,16 @@
 #include "ui.h"
 #include "mic.h"
 
-#include "esp_log.h"
-#include "bsp/esp-bsp.h"
-
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
+#include "esp_log.h"
+
 static const char *TAG = "UI";
+
+static bool recording = false;
+
+/*----------------------------------------------------------*/
 
 static void record_task(void *arg)
 {
@@ -26,53 +27,52 @@ static void record_task(void *arg)
     {
         ESP_LOGI(TAG, "Recording Finished");
 
-        bsp_display_lock(portMAX_DELAY);
-
         lv_label_set_text(
             ui_status,
             "Status : Recording Complete");
 
-        lv_label_set_text(
-            ui_speech,
-            "Recognized Speech:\n\n(Audio Captured)");
-
-        lv_label_set_text(
-            ui_response,
-            "AI Response:\n\nReady for STT");
-
-        lv_obj_set_style_bg_color(
-            ui_mic_btn,
-            lv_palette_main(LV_PALETTE_BLUE),
-            0);
-
-        bsp_display_unlock();
-
-        ESP_LOGI(TAG, "UI Updated");
+        if (mic_voice_detected())
+        {
+            lv_label_set_text(
+                ui_speech_text,
+                "Voice Detected");
+        }
+        else
+        {
+            lv_label_set_text(
+                ui_speech_text,
+                "No Voice Detected");
+        }
     }
     else
     {
-        bsp_display_lock(portMAX_DELAY);
-
         lv_label_set_text(
             ui_status,
             "Status : Recording Failed");
-
-        lv_obj_set_style_bg_color(
-            ui_mic_btn,
-            lv_palette_main(LV_PALETTE_BLUE),
-            0);
-
-        bsp_display_unlock();
     }
+
+    lv_obj_set_style_bg_color(
+        ui_mic_btn,
+        lv_palette_main(LV_PALETTE_BLUE),
+        0);
+
+    recording = false;
+
+    ESP_LOGI(TAG, "UI Updated");
 
     vTaskDelete(NULL);
 }
 
+/*----------------------------------------------------------*/
+
 void mic_btn_event_cb(lv_event_t *e)
 {
-    ESP_LOGI(TAG, "MIC Button Pressed");
+    if(recording)
+        return;
 
-    bsp_display_lock(portMAX_DELAY);
+    recording = true;
+
+    ESP_LOGI(TAG, "Button Pressed");
 
     lv_obj_set_style_bg_color(
         ui_mic_btn,
@@ -84,14 +84,11 @@ void mic_btn_event_cb(lv_event_t *e)
         "Status : Recording...");
 
     lv_label_set_text(
-        ui_speech,
-        "Recognized Speech:\n\nListening...");
+        ui_speech_text,
+        "Listening...");
 
-    lv_label_set_text(
-        ui_response,
-        "AI Response:\n\nWaiting for speech...");
-
-    bsp_display_unlock();
+    /* Force LCD refresh BEFORE recording */
+    lv_refr_now(NULL);
 
     xTaskCreate(
         record_task,

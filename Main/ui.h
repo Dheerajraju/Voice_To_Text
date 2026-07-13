@@ -1,6 +1,8 @@
 /*
  * ============================================================
  * ESP32-P4 AI Voice Assistant
+ * VTT_V8
+ * Stage 4.3
  * UI Header
  * Compatible with LVGL v9
  * ============================================================
@@ -33,10 +35,10 @@ extern lv_obj_t *ui_title;
 extern lv_obj_t *ui_mic_btn;
 extern lv_obj_t *ui_mic_label;
 
-/* Status */
+/* Status Label */
 extern lv_obj_t *ui_status;
 
-/* Speech */
+/* Speech Labels */
 extern lv_obj_t *ui_speech_title;
 extern lv_obj_t *ui_speech_text;
 
@@ -45,14 +47,9 @@ extern lv_obj_t *ui_speech_text;
  *------------------------------------------------------------*/
 
 /**
- * @brief Initialize complete UI
+ * @brief Initialize the complete UI
  */
 void ui_init(void);
-
-/**
- * @brief Create Home Screen
- */
-void ui_home_create(void);
 
 #ifdef __cplusplus
 }

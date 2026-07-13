@@ -1,7 +1,8 @@
 /*
  * ============================================================
  * ESP32-P4 AI Voice Assistant
- * Stage 5
+ * VTT_V8
+ * Stage 3
  * Main Application
  * ============================================================
  */
@@ -16,17 +17,17 @@
 #include "ui.h"
 #include "mic.h"
 
-static const char *TAG = "VOICE_AI";
+static const char *TAG = "VTT";
 
 void app_main(void)
 {
-    ESP_LOGI(TAG, "========================================");
+    ESP_LOGI(TAG, "=================================");
     ESP_LOGI(TAG, "ESP32-P4 AI Voice Assistant");
-    ESP_LOGI(TAG, "Stage 5");
-    ESP_LOGI(TAG, "========================================");
+    ESP_LOGI(TAG, "VTT_V8 Stage 3");
+    ESP_LOGI(TAG, "=================================");
 
     /*----------------------------------------------------------
-     * Start Display
+     * Initialize LCD
      *---------------------------------------------------------*/
 
     bsp_display_cfg_t cfg = {
@@ -58,6 +59,8 @@ void app_main(void)
 
     bsp_display_backlight_on();
 
+    ESP_LOGI(TAG, "LCD Initialized");
+
     /*----------------------------------------------------------
      * Initialize Microphone
      *---------------------------------------------------------*/
@@ -81,7 +84,11 @@ void app_main(void)
 
     bsp_display_unlock();
 
-    ESP_LOGI(TAG, "UI Created Successfully");
+    ESP_LOGI(TAG, "UI Initialized");
+
+    /*----------------------------------------------------------
+     * Main Loop
+     *---------------------------------------------------------*/
 
     while (1)
     {

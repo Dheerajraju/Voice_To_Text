@@ -1,0 +1,11 @@
+[mapping:libstdcxx_unwind]
+archive: libstdc++.a
+entries:
+    eh_personality (flash_text)
+    eh_throw (flash_text)
+    eh_alloc (flash_text)
+    eh_catch (flash_text)
+    eh_terminate (flash_text)
+    eh_globals (flash_text)
+    eh_aux_runtime (flash_text)
+    eh_call (flash_text)

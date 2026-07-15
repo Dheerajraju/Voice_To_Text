@@ -2,7 +2,6 @@
  * ============================================================
  * ESP32-P4 AI Voice Assistant
  * VTT_V8
- * Stage 4.3
  * UI Manager
  * ============================================================
  */
@@ -14,9 +13,6 @@
 
 static const char *TAG = "UI";
 
-/*-------------------------------------------------------------
- * Global UI Objects
- *------------------------------------------------------------*/
 
 lv_obj_t *ui_screen = NULL;
 
@@ -30,24 +26,56 @@ lv_obj_t *ui_status = NULL;
 lv_obj_t *ui_speech_title = NULL;
 lv_obj_t *ui_speech_text = NULL;
 
-/*-------------------------------------------------------------
- * Initialize UI
- *------------------------------------------------------------*/
+
 
 void ui_init(void)
 {
-    ESP_LOGI(TAG, "====================================");
-    ESP_LOGI(TAG, "Creating Home Screen");
-    ESP_LOGI(TAG, "====================================");
+    ESP_LOGI(TAG,
+             "====================================");
 
-    /* Create complete home screen */
+    ESP_LOGI(TAG,
+             "Creating Home Screen");
+
+
     ui_home_create();
 
-    /* Make it the active screen */
-    lv_screen_load(ui_screen);
 
-    /* Force immediate refresh */
-    lv_refr_now(NULL);
+    if(ui_screen != NULL)
+    {
+        lv_screen_load(ui_screen);
+    }
 
-    ESP_LOGI(TAG, "UI Initialized Successfully");
+
+    ESP_LOGI(TAG,
+             "UI Initialized Successfully");
+}
+
+
+
+void ui_set_status(const char *text)
+{
+    if(ui_status == NULL)
+    {
+        return;
+    }
+
+
+    lv_label_set_text(
+        ui_status,
+        text);
+}
+
+
+
+void ui_set_speech(const char *text)
+{
+    if(ui_speech_text == NULL)
+    {
+        return;
+    }
+
+
+    lv_label_set_text(
+        ui_speech_text,
+        text);
 }

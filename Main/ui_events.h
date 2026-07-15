@@ -2,9 +2,7 @@
  * ============================================================
  * ESP32-P4 AI Voice Assistant
  * VTT_V8
- * Stage 4.3
  * UI Events Header
- * Compatible with LVGL v9
  * ============================================================
  */
 
@@ -15,24 +13,13 @@
 extern "C" {
 #endif
 
-/*-------------------------------------------------------------
- * Includes
- *------------------------------------------------------------*/
-
 #include "lvgl.h"
 
 /*-------------------------------------------------------------
- * Event Callbacks
+ * Initialize UI Events
  *------------------------------------------------------------*/
 
-/**
- * @brief Microphone button event callback
- *
- * Called whenever the "Press to Talk" button is clicked.
- *
- * @param e LVGL event pointer
- */
-void mic_btn_event_cb(lv_event_t *e);
+void ui_events_init(void);
 
 #ifdef __cplusplus
 }

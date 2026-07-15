@@ -1,101 +1,165 @@
 /*
  * ============================================================
  * ESP32-P4 AI Voice Assistant
- * VTT_V8
- * Stage 4.3
  * UI Events
- * Compatible with LVGL v9
  * ============================================================
  */
 
+
 #include "ui_events.h"
+
 #include "ui.h"
 #include "mic.h"
+#include "speech.h"
 
 #include "esp_log.h"
 
+
 static const char *TAG = "UI";
 
-static bool recording = false;
 
-/*-------------------------------------------------------------
- * Microphone Button Event
- *------------------------------------------------------------*/
-
-void mic_btn_event_cb(lv_event_t *e)
+static void mic_button_event(lv_event_t *e)
 {
-    LV_UNUSED(e);
 
-    if(recording)
+    ESP_LOGI(TAG,
+             "MIC BUTTON PRESSED");
+
+
+    /*
+     * Temporary UI update only.
+     *
+     * Heavy operations will be moved
+     * into a FreeRTOS task.
+     */
+
+
+    ui_set_status(
+        "Starting recording...");
+
+
+    ui_set_speech(
+        "Listening...");
+
+
+
+    esp_err_t ret =
+        mic_start();
+
+
+
+    if(ret != ESP_OK)
     {
+
+        ESP_LOGE(TAG,
+                 "Recording failed");
+
+
+        ui_set_status(
+            "Recording Error");
+
+
+        ui_set_speech(
+            "Mic failed");
+
+
         return;
     }
 
-    recording = true;
 
-    ESP_LOGI(TAG, "Button Pressed");
 
-    /* Change button colour */
-    lv_obj_set_style_bg_color(
-        ui_mic_btn,
-        lv_palette_main(LV_PALETTE_RED),
-        0);
-
-    /* Update status */
-    lv_label_set_text(
-        ui_status,
-        "Status : Recording...");
-
-    lv_label_set_text(
-        ui_speech_text,
-        "Listening...");
-
-    /* Force immediate redraw */
-    lv_refr_now(NULL);
-
-    ESP_LOGI(TAG, "Starting microphone...");
-
-    if(mic_start() == ESP_OK)
+    if(!mic_voice_detected())
     {
-        ESP_LOGI(TAG, "Recording Finished");
 
-        lv_label_set_text(
-            ui_status,
-            "Status : Recording Complete");
+        ESP_LOGW(TAG,
+                 "No voice detected");
 
-        if(mic_voice_detected())
-        {
-            lv_label_set_text(
-                ui_speech_text,
-                "Voice Detected");
-        }
-        else
-        {
-            lv_label_set_text(
-                ui_speech_text,
-                "No Voice Detected");
-        }
+
+        ui_set_status(
+            "Ready");
+
+
+        ui_set_speech(
+            "No voice detected");
+
+
+        return;
+    }
+
+
+
+    ui_set_status(
+        "Recognizing...");
+
+
+
+    char text[512];
+
+
+    ret =
+        speech_recognize(
+            text,
+            sizeof(text));
+
+
+
+    if(ret == ESP_OK)
+    {
+
+        ui_set_status(
+            "Complete");
+
+
+        ui_set_speech(
+            text);
+
+
+        ESP_LOGI(TAG,
+                 "Speech:");
+        ESP_LOGI(TAG,
+                 "%s",
+                 text);
+
     }
     else
     {
-        lv_label_set_text(
-            ui_status,
-            "Status : Recording Failed");
 
-        lv_label_set_text(
-            ui_speech_text,
-            "");
+        ui_set_status(
+            "Server Error");
+
+
+        ui_set_speech(
+            "Recognition failed");
+
     }
 
-    /* Restore button colour */
-    lv_obj_set_style_bg_color(
+
+}
+
+
+
+void ui_events_init(void)
+{
+
+    if(ui_mic_btn == NULL)
+    {
+
+        ESP_LOGE(TAG,
+                 "MIC button NULL");
+
+        return;
+    }
+
+
+
+    lv_obj_add_event_cb(
         ui_mic_btn,
-        lv_palette_main(LV_PALETTE_BLUE),
-        0);
+        mic_button_event,
+        LV_EVENT_CLICKED,
+        NULL);
 
-    lv_refr_now(NULL);
 
-    ESP_LOGI(TAG, "UI Updated");
 
-    recording = false;
+    ESP_LOGI(TAG,
+             "UI Events Initialized");
+
 }

@@ -34,7 +34,7 @@ extern "C" {
 #define RECORD_TIME_SECONDS     5
 
 /* Total samples */
-#define AUDIO_BUFFER_SAMPLES    (SAMPLE_RATE * RECORD_TIME_SECONDS)
+#define AUDIO_BUFFER_SAMPLES    (16000 * 5)
 
 /* Total PCM buffer size */
 #define AUDIO_BUFFER_SIZE        (AUDIO_BUFFER_SAMPLES * sizeof(int16_t))

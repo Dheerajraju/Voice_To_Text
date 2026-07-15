@@ -23,36 +23,40 @@ esp_err_t spiffs_init(void)
 {
     ESP_LOGI(TAG, "Initializing SPIFFS...");
 
-    esp_vfs_spiffs_conf_t conf =
-    {
+    esp_vfs_spiffs_conf_t conf = {
         .base_path = "/spiffs",
         .partition_label = "storage",
         .max_files = 5,
-        .format_if_mount_failed = true
+        .format_if_mount_failed = true,
     };
 
     esp_err_t ret = esp_vfs_spiffs_register(&conf);
 
-    if (ret != ESP_OK)
+    if (ret == ESP_FAIL)
     {
-        ESP_LOGE(TAG, "Failed to mount SPIFFS (%s)",
-                 esp_err_to_name(ret));
+        ESP_LOGE(TAG, "Failed to mount or format SPIFFS");
+        return ret;
+    }
+    else if (ret == ESP_ERR_NOT_FOUND)
+    {
+        ESP_LOGE(TAG, "SPIFFS partition 'storage' not found");
+        return ret;
+    }
+    else if (ret != ESP_OK)
+    {
+        ESP_LOGE(TAG, "SPIFFS init failed: %s", esp_err_to_name(ret));
         return ret;
     }
 
     size_t total = 0;
     size_t used = 0;
 
-    ret = esp_spiffs_info(conf.partition_label,
-                          &total,
-                          &used);
+    ret = esp_spiffs_info(conf.partition_label, &total, &used);
 
     if (ret != ESP_OK)
     {
-        ESP_LOGE(TAG,
-                 "Failed to get SPIFFS info (%s)",
-                 esp_err_to_name(ret));
-
+        ESP_LOGE(TAG, "Failed to get SPIFFS info: %s", esp_err_to_name(ret));
+        esp_vfs_spiffs_unregister(conf.partition_label);
         return ret;
     }
 
@@ -60,12 +64,9 @@ esp_err_t spiffs_init(void)
     ESP_LOGI(TAG, "SPIFFS Mounted Successfully");
     ESP_LOGI(TAG, "Mount Point : %s", conf.base_path);
     ESP_LOGI(TAG, "Partition   : %s", conf.partition_label);
-    ESP_LOGI(TAG, "Total Space : %u bytes",
-             (unsigned)total);
-    ESP_LOGI(TAG, "Used Space  : %u bytes",
-             (unsigned)used);
-    ESP_LOGI(TAG, "Free Space  : %u bytes",
-             (unsigned)(total - used));
+    ESP_LOGI(TAG, "Total Space : %u bytes", (unsigned)total);
+    ESP_LOGI(TAG, "Used Space  : %u bytes", (unsigned)used);
+    ESP_LOGI(TAG, "Free Space  : %u bytes", (unsigned)(total - used));
     ESP_LOGI(TAG, "================================");
 
     return ESP_OK;

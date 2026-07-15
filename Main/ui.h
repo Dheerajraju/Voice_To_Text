@@ -51,6 +51,14 @@ extern lv_obj_t *ui_speech_text;
  */
 void ui_init(void);
 
+/*-------------------------------------------------------------
+ * UI Update Functions
+ *------------------------------------------------------------*/
+
+void ui_set_status(const char *text);
+
+void ui_set_speech(const char *text);
+
 #ifdef __cplusplus
 }
 #endif

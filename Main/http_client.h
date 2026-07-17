@@ -15,48 +15,40 @@ extern "C" {
 /*-------------------------------------------------------------
  * Includes
  *------------------------------------------------------------*/
-
-#include "esp_err.h"
 #include <stdbool.h>
+#include <stddef.h>
+#include "esp_err.h"
 
 /*-------------------------------------------------------------
  * Configuration
  *------------------------------------------------------------*/
+/* Replace with your computer's local Wi-Fi IP address and server port */
+#define TRANSCRIBE_URL              "http://10.157.42.233:8000/transcribe"
 
-#define HTTP_RESPONSE_BUFFER_SIZE    8192
+/* Buffer size for receiving JSON response from server */
+#define HTTP_RESPONSE_BUFFER_SIZE   8192
 
 /*-------------------------------------------------------------
  * Public API
  *------------------------------------------------------------*/
 
 /**
- * @brief Upload record.wav to Whisper server
+ * @brief Upload /spiffs/record.wav to local Whisper server via HTTP POST.
  *
- * Opens:
- *      /spiffs/record.wav
+ * Streams the audio file using multipart/form-data and parses the
+ * JSON response {"text": "..."}.
  *
- * Sends:
- *      multipart/form-data POST
+ * @param[out] recognized_text Buffer to store the transcribed text string.
+ * @param[in]  max_len         Maximum capacity of recognized_text buffer.
  *
- * URL:
- *      http://SERVER_IP:8000/transcribe
- *
- * @param recognized_text
- * Buffer where the recognized text will be copied.
- *
- * @param max_len
- * Size of recognized_text buffer.
- *
- * @return
- * ESP_OK on success.
+ * @return ESP_OK on success, ESP_FAIL or appropriate error code otherwise.
  */
-esp_err_t http_upload_wav(char *recognized_text,
-                          size_t max_len);
+esp_err_t http_upload_wav(char *recognized_text, size_t max_len);
 
 /**
- * @brief Check if server is reachable
+ * @brief Check if the speech recognition server is reachable.
  *
- * Optional helper function.
+ * @return true if server responds to a GET request, false otherwise.
  */
 bool http_server_available(void);
 
@@ -64,4 +56,4 @@ bool http_server_available(void);
 }
 #endif
 
-#endif
+#endif /* HTTP_CLIENT_H */

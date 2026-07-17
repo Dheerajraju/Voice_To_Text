@@ -30,10 +30,6 @@ An embedded AI Voice-to-Text assistant prototype powered by the **ESP32-P4** mic
 
 ---
 
-## 🚀 Getting Started
-
-### 1. Prerequisites
-Ensure you have [ESP-IDF v5.x](https://docs.espressif.com/projects/esp-idf/en/latest/esp32p4/get-started/) installed and configured on your system.
 
 ### 2. Clone the Repository
 ```bash

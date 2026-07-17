@@ -393,3 +393,4 @@ bool mic_voice_detected(void)
     return voice_detected;
 }
 
+

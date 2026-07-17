@@ -2,9 +2,8 @@
  * ============================================================
  * ESP32-P4 AI Voice Assistant
  * VTT_V8
- * Stage 4.3
  * UI Header
- * Compatible with LVGL v9
+ * Compatible with LVGL v9.5
  * ============================================================
  */
 
@@ -58,6 +57,14 @@ void ui_init(void);
 void ui_set_status(const char *text);
 
 void ui_set_speech(const char *text);
+
+/*-------------------------------------------------------------
+ * Button Control Functions
+ *------------------------------------------------------------*/
+
+void ui_enable_button(void);
+
+void ui_disable_button(void);
 
 #ifdef __cplusplus
 }

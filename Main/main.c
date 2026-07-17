@@ -2,8 +2,12 @@
  * ============================================================
  * ESP32-P4 AI Voice Assistant
  * VTT_V8
- * Stage 5
- * Main Application  DESKTOP-G3VO5OF 9249
+ * Main Application
+ *
+ * Compatible with:
+ *  ESP-IDF v5.5.4
+ *  Waveshare BSP v2.0.0
+ *  LVGL v9.5
  * ============================================================
  */
 
@@ -12,21 +16,22 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-#include "esp_log.h"
 #include "esp_err.h"
+#include "esp_log.h"
 
 #include "nvs_flash.h"
 
 #include "bsp/esp-bsp.h"
+
 #include "lvgl.h"
 
 #include "ui.h"
 #include "ui_events.h"
 
-#include "mic.h"
 #include "wifi.h"
-#include "spiffs.h"
+#include "mic.h"
 #include "speech.h"
+#include "spiffs.h"
 
 static const char *TAG = "VTT";
 
@@ -41,7 +46,6 @@ void app_main(void)
     ESP_LOGI(TAG, "====================================");
     ESP_LOGI(TAG, "ESP32-P4 AI Voice Assistant");
     ESP_LOGI(TAG, "VTT_V8");
-    ESP_LOGI(TAG, "Stage 5");
     ESP_LOGI(TAG, "====================================");
 
     /*---------------------------------------------------------
@@ -56,28 +60,30 @@ void app_main(void)
         err == ESP_ERR_NVS_NEW_VERSION_FOUND)
     {
         ESP_ERROR_CHECK(nvs_flash_erase());
-        err = nvs_flash_init();
+        ESP_ERROR_CHECK(nvs_flash_init());
     }
 
-    ESP_ERROR_CHECK(err);
-
-    ESP_LOGI(TAG, "NVS Initialized");
+    ESP_LOGI(TAG, "NVS Ready");
 
     /*---------------------------------------------------------
      * LCD
      *---------------------------------------------------------*/
 
-    ESP_LOGI(TAG, "Initializing LCD...");
+    ESP_LOGI(TAG, "Initializing Display...");
 
     lv_display_t *display = bsp_display_start();
 
     if (display == NULL)
     {
-        ESP_LOGE(TAG, "Failed to initialize LCD");
+        ESP_LOGE(TAG, "Display initialization failed");
         return;
     }
 
-    ESP_LOGI(TAG, "LCD Initialized");
+    bsp_display_brightness_init();
+    bsp_display_backlight_on();
+    bsp_display_brightness_set(100);
+
+    ESP_LOGI(TAG, "Display Ready");
 
     /*---------------------------------------------------------
      * SPIFFS
@@ -93,7 +99,7 @@ void app_main(void)
         return;
     }
 
-    ESP_LOGI(TAG, "SPIFFS Initialized");
+    ESP_LOGI(TAG, "SPIFFS Ready");
 
     /*---------------------------------------------------------
      * WiFi
@@ -103,14 +109,13 @@ void app_main(void)
 
     err = wifi_init_sta();
 
-    if (err != ESP_OK)
+    if (err == ESP_OK)
     {
-        ESP_LOGW(TAG, "WiFi unavailable.");
-        ESP_LOGW(TAG, "Speech recognition disabled.");
+        ESP_LOGI(TAG, "WiFi Connected");
     }
     else
     {
-        ESP_LOGI(TAG, "WiFi Connected");
+        ESP_LOGW(TAG, "WiFi unavailable");
     }
 
     /*---------------------------------------------------------
@@ -127,7 +132,7 @@ void app_main(void)
         return;
     }
 
-    ESP_LOGI(TAG, "Microphone Initialized");
+    ESP_LOGI(TAG, "Microphone Ready");
 
     /*---------------------------------------------------------
      * Speech Module
@@ -139,32 +144,46 @@ void app_main(void)
 
     if (err != ESP_OK)
     {
-        ESP_LOGW(TAG, "Speech module unavailable.");
+        ESP_LOGW(TAG, "Speech module initialization failed");
     }
-    else
-    {
-        ESP_LOGI(TAG, "Speech Module Initialized");
-    }
+
+    ESP_LOGI(TAG, "Speech Module Ready");
 
     /*---------------------------------------------------------
      * UI
      *---------------------------------------------------------*/
 
-    ESP_LOGI(TAG, "Creating Home Screen...");
+    ESP_LOGI(TAG, "Creating User Interface...");
+
+    /*
+     * IMPORTANT
+     *
+     * All LVGL object creation must happen while
+     * holding the BSP display lock.
+     */
+
+    bsp_display_lock(portMAX_DELAY);
 
     ui_init();
     ui_events_init();
 
-    ESP_LOGI(TAG, "UI Initialized");
+    bsp_display_unlock();
+
+    ESP_LOGI(TAG, "UI Ready");
 
     /*---------------------------------------------------------
-     * Ready
+     * System Ready
      *---------------------------------------------------------*/
 
     ESP_LOGI(TAG, "====================================");
     ESP_LOGI(TAG, "System Ready");
-    ESP_LOGI(TAG, "Touch the button to speak.");
+    ESP_LOGI(TAG, "Touch the blue button to start.");
     ESP_LOGI(TAG, "====================================");
+
+    /*
+     * The Waveshare BSP already owns the LVGL task.
+     * Nothing else is required here.
+     */
 
     while (true)
     {
